@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
   res.json({
     status: "Success",
     message:
-      "Welcome to PACE APP API, kindly visit the following links for information about usage",
+      "Welcome to Gallivanter API, kindly visit the following links for information about usage",
     Documentation_link: "Link to documentations will go here",
   });
 });
