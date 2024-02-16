@@ -20,22 +20,27 @@ router
     tourController.createTour
   );
 
-// router
-//   .route("/:id")
-//   .get(
-//     passport.authenticate("jwt", { session: false }),
-//     questionController.getQuestion
-//   )
-//   .put(
-//     passport.authenticate("jwt", { session: false }),
-//     // restrictToMW.restrictTo('admin'),
-//     questionController.updateQuestion
-//   )
-//   .patch(
-//     passport.authenticate("jwt", { session: false }),
-//     restrictToMW.restrictTo("admin"),
-//     questionController.updateQuestionState
-//   )
+router
+  .route("/:tourId")
+  .get(
+    passport.authenticate("jwt", { session: false }),
+    tourController.getACreatorTour
+  )
+  .put(
+    passport.authenticate("jwt", { session: false }),
+    tourController.updateTour
+  )
+  .patch(
+    passport.authenticate("jwt", { session: false }),
+    tourController.updateTourState
+  )
+
+  router
+  .route("/:tourId/members")
+  .get(
+    passport.authenticate("jwt", { session: false }),
+    tourController.getTourRegMembers
+  )
 //   .delete(
 //     passport.authenticate("jwt", { session: false }),
 //     restrictToMW.restrictTo("admin"),

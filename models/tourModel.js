@@ -5,7 +5,7 @@ const TourSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Question is compulsory"],
+      required: [true, "Title is compulsory"],
       unique: true,
       trim: true,
     },
@@ -24,6 +24,10 @@ const TourSchema = new mongoose.Schema(
       // get the creator from creatorSchema
       ref: "Creator",
     },
+    location: {
+      type: String,
+      required: true,
+    },
     numOfDays: {
       type: Number,
       required: true,
@@ -35,6 +39,24 @@ const TourSchema = new mongoose.Schema(
     maxCapacity: {
       type: Number,
       required: true,
+    },
+    regMembers: {
+      type: [
+        { 
+          type: mongoose.Schema.Types.ObjectId,
+        },
+      ],
+      validate: {
+        validator: function(arr) {
+          return arr.length <= this.maxCapacity; // accessing maxCapacity from the schema
+        },
+        message: "Number of registered members cannot exceed the maximum capacity"
+      },
+      default: [],
+    },
+    numOfRegMembers: {
+      type: Number,
+      default: 0,
     },
     tags: [String],
     tourImagesUrl: {

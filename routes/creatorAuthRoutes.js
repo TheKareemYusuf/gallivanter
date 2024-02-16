@@ -7,7 +7,7 @@ const AppError = require("../utils/appError");
 const authRouter = express.Router();
 
 const CreatorValidationMW = require("./../validators/creator.validation");
- 
+
 authRouter.post(
   "/signup",
   CreatorValidationMW,
@@ -22,7 +22,6 @@ authRouter.post(
       expiresIn: "12h",
     });
 
-    
     // Remove password from output
     req.user.password = undefined;
 
@@ -52,12 +51,10 @@ authRouter.post("/login", async (req, res, next) => {
           _id: user._id,
           email: user.email,
           firstName: user.firstName,
-          role: user.role
         };
         const token = jwt.sign({ user: body }, CONFIG.SECRET_KEY, {
           expiresIn: "12h",
         });
-
 
         return res.json({
           firstName: user.firstName,

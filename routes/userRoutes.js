@@ -17,38 +17,38 @@ router
   .route("/")
   .get(
     passport.authenticate("jwt", { session: false }),
-    restrictToMW.restrictTo("admin"),
-    userController.getAllUsers
+    // restrictToMW.restrictTo("admin"),
+    userController.getUserProfile
   )
-  .post(
+  .patch(
     UserValidationMW,
     passport.authenticate("jwt", { session: false }),
-    userController.createUser
+    userController.updateUserProfile
   );
 
-router
-  .route("/:id")
-  .get(
-    passport.authenticate("jwt", { session: false }),
-    restrictToMW.restrictTo("admin"),
-    userController.getUser
-  )
+// router
+//   .route("/:id")
+//   .get(
+//     passport.authenticate("jwt", { session: false }),
+//     restrictToMW.restrictTo("admin"),
+//     userController.getUser
+//   )
   // .put(
   //   UserValidationMW,
   //   passport.authenticate("jwt", { session: false }),
   //   restrictToMW.restrictTo("admin"),
   //   userController.updateUserProfile
   // )
-  .patch(
-    UserValidationMW,
-    passport.authenticate("jwt", { session: false }),
-    restrictToMW.restrictTo("admin"),
-    userController.updateUserStatus
-  )
-  .delete(
-    passport.authenticate("jwt", { session: false }),
-    restrictToMW.restrictTo("admin"),
-    userController.deleteUser
-  );
+  // .patch(
+  //   UserValidationMW,
+  //   passport.authenticate("jwt", { session: false }),
+  //   restrictToMW.restrictTo("admin"),
+  //   userController.updateUserStatus
+  // )
+  // .delete(
+  //   passport.authenticate("jwt", { session: false }),
+  //   restrictToMW.restrictTo("admin"),
+  //   userController.deleteUser
+  // );
 
 module.exports = router;

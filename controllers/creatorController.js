@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Creator = require("./../models/creatorModel");
-const Question = require("./../models/questionModel");
+const Tour = require("./../models/tourModel");
 const AppError = require("./../utils/appError");
 const APIFeatures = require("./../utils/apiFeatures");
 const uploadPicture = require("./../utils/multerImageHandler");
@@ -141,7 +141,7 @@ const updateCreatorProfile = async (req, res, next) => {
       );
     }  
 
-    const filteredBody = filterObj(creatorUpdate, 'firstName', 'lastName', 'email', 'phoneNumber', 'department');
+    const filteredBody = filterObj(creatorUpdate, 'firstName', 'lastName', 'email', 'phoneNumber');
 
 
     const updatedCreator = await Creator.findByIdAndUpdate(id, filteredBody, {
@@ -154,7 +154,7 @@ const updateCreatorProfile = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      message: "Question updated successfully",
+      message: "Creator updated successfully",
       data: updatedCreator,
     });
   } catch (error) {
@@ -170,28 +170,24 @@ const getProfile = async (req, res, next) => {
       return next(new AppError("Creator not found", 404));
     }
 
-    const creatorProfileStats = await Question.getCreatorProfileStats(id);
-    // Transform the array of statsByState into an object
-    const statsByStateObj = {};
-    creatorProfileStats[0].statsByState.forEach((stat) => {
-      statsByStateObj[stat._id] = stat.count;
-    });
+    // const creatorProfileStats = await Question.getCreatorProfileStats(id);
+    // // Transform the array of statsByState into an object
+    // const statsByStateObj = {};
+    // creatorProfileStats[0].statsByState.forEach((stat) => {
+    //   statsByStateObj[stat._id] = stat.count;
+    // });
 
-    // Ensure that all states (pending, approved, rejected) are present in the response
-    const stateLabels = ["pending", "approved", "rejected"];
-    stateLabels.forEach((state) => {
-      if (!statsByStateObj.hasOwnProperty(state)) {
-        statsByStateObj[state] = 0;
-      }
-    });
+    // // Ensure that all states (pending, approved, rejected) are present in the response
+    // const stateLabels = ["pending", "approved", "rejected"];
+    // stateLabels.forEach((state) => {
+    //   if (!statsByStateObj.hasOwnProperty(state)) {
+    //     statsByStateObj[state] = 0;
+    //   }
+    // });
 
     res.status(200).json({
       status: "success",
-      data: {
-        creator,
-        totalQuestions: creatorProfileStats[0].totalQuestions,
-        statsByState: statsByStateObj,
-      },
+      data: creator,
     });
   } catch (error) {
     next(error);

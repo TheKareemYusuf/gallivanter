@@ -49,7 +49,15 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ["Male", "Female"],
     },
-    phone: String,
+    tours: {
+      type: [
+        { 
+          type: mongoose.Schema.Types.ObjectId,
+        },
+      ],
+      default: []
+    },
+    phoneNumber: String,
     address: String,
     // Other relevant fields
     // You can add more fields as needed

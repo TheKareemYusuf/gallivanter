@@ -3,6 +3,7 @@ const Joi = require("joi");
 const TourSchema = Joi.object({
   title: Joi.string().trim().required(),
   description: Joi.string().trim().required(),
+  location: Joi.string(),
   creatorId: Joi.string(),
   creatorName: Joi.string(),
   numOfDays: Joi.number(),

@@ -21,7 +21,6 @@ authRouter.post(
       expiresIn: "12h",
     });
 
-    console.log("I am inside the authentication router");
 
     // Remove password from output
     req.user.password = undefined;
@@ -51,6 +50,8 @@ authRouter.post("/login", async (req, res, next) => {
         const body = {
           _id: req.user._id,
           email: req.user.email,
+          firstName: req.user.firstName,
+
         };
         const token = jwt.sign({ user: body }, CONFIG.SECRET_KEY, {
           expiresIn: "12h",
@@ -59,6 +60,7 @@ authRouter.post("/login", async (req, res, next) => {
       
 
         return res.json({
+          firstName: user.firstName,
           email: user.email,
           token,
         });

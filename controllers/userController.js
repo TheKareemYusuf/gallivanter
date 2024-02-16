@@ -52,6 +52,26 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const getUserProfile = async (req, res, next) => {
+  try {
+    const id = req.user._id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createUser = (req, res, next) => {
   res.status(200).json({
     status: "success",
@@ -85,7 +105,7 @@ const updateUserProfile = async (req, res, next) => {
     } 
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated
-    // const filteredBody = filterObj(userUpdate, "firstName", "lastNa`me" )
+    const filteredBody = filterObj(userUpdate, "firstName", "lastName" )
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {
@@ -175,6 +195,7 @@ const deleteUser = async (req, res, next) => {
 module.exports = {
   getAllUsers,
   getUser,
+  getUserProfile,
   createUser,
   updateUserStatus,
   updateUserProfile,

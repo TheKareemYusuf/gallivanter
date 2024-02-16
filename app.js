@@ -11,6 +11,9 @@ const userAuthRouter = require("./routes/userAuthRoutes");
 const creatorAuthRouter = require("./routes/creatorAuthRoutes");
 const creatorTourRouter = require('./routes/creatorTourRoutes');
 const publicTourRouter = require('./routes/publicTourRoutes');
+const creatorRouter = require('./routes/creatorRoutes');
+const userRouter = require('./routes/userRoutes');
+const userTourRouter = require('./routes/userTourRoutes');
 
 
 
@@ -48,18 +51,20 @@ app.get("/", (req, res) => {
   });
 });
 
+// Public Tour Routes
+app.use("/api/v1/tours", publicTourRouter);
 
 
 // User ROUTES
 app.use("/api/v1/users/", userAuthRouter);
-
-// Public Tour Routes
-app.use("/api/v1/tours", publicTourRouter);
+app.use("/api/v1/users/profile", userRouter);
+app.use("/api/v1/users/tours", userTourRouter)
 
 
 // Creator ROUTES
 app.use("/api/v1/creators/", creatorAuthRouter);
 app.use("/api/v1/creators/tours", creatorTourRouter);
+app.use("/api/v1/creators/profile", creatorRouter);
 
 
 
