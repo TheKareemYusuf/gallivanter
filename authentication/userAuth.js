@@ -28,7 +28,7 @@ passport.use(
   "user-signup",
   new passportCustom(async (req, next) => {
     try {
-      const { firstName, lastName, email, password, confirmPassword } = req.body;
+      const { firstName, lastName, email, password, confirmPassword, phoneNumber } = req.body;
 
       // Check if a user with the provided username exists
       // const existingEmail = await User.findOne({ email });
@@ -42,9 +42,10 @@ passport.use(
         email,
         password,
         confirmPassword,
+        phoneNumber,
+        companyName
       });
 
-      console.log("I am done creating the user");
       return next(null, user);
     } catch (error) {
       next(error);

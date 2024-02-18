@@ -35,6 +35,7 @@ passport.use(
         password,
         confirmPassword,
         phoneNumber,
+        companyName
       } = req.body;
       const user = await Creator.create({
         email,
@@ -42,7 +43,8 @@ passport.use(
         lastName,
         password,
         confirmPassword,
-        phoneNumber
+        phoneNumber,
+        companyName
       });
 
       return next(null, user);

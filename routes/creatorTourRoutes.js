@@ -14,7 +14,7 @@ router
   )
   .post(
     passport.authenticate("jwt", { session: false }),
-    // questionController.uploadQuestionPicture,
+    tourController.uploadTourPicture,
     // questionController.resizeQuestionPicture,
     TourValidationMW,
     tourController.createTour
@@ -40,6 +40,14 @@ router
   .get(
     passport.authenticate("jwt", { session: false }),
     tourController.getTourRegMembers
+  )
+
+  router
+  .route("/:tourId/upload-images")
+  .patch(
+    passport.authenticate("jwt", { session: false }),
+    tourController.uploadMultiplePictures,
+    tourController.addImages
   )
 //   .delete(
 //     passport.authenticate("jwt", { session: false }),

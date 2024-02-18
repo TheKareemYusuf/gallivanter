@@ -1,5 +1,4 @@
 const express = require("express");
-// const express = require("express");
 const passport = require("passport");
 const inviteController = require("./../controllers/inviteController");
 const restrictToMW = require("./../authentication/restrictionHandler");

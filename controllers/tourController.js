@@ -9,12 +9,21 @@ const uploadPicture = require("../utils/multerImageHandler");
 
 //-----------------------------------------------------
 
+const {
+  uploadToCloudinary,
+  removeFromCloudinary,
+} = require("./../utils/cloudinary");
+
+
+const uploadTourPicture = uploadPicture.single("tourCoverImage");
+const uploadMultiplePictures = uploadPicture.array("tourImages")
+
 const createTour = async (req, res, next) => {
   try {
     const id = req.user._id;
     const user = await Creator.findById(id);
     if (!user) {
-      return next(new AppError("Only creator can create tours", 404));
+      return next(new AppError("Creator not found", 404));
     }
 
     const {
@@ -29,13 +38,13 @@ const createTour = async (req, res, next) => {
       endDate,
     } = req.body;
 
-    // let imageData = { }
+    let imageData = { }
 
-    // if (req.file) {
-    //   const imageBuffer = req.file.buffer
-    //   const data = await uploadToCloudinary(imageBuffer, "question-images");
-    //   imageData = data
-    // }
+    if (req.file) {
+      const imageBuffer = req.file.buffer
+      const data = await uploadToCloudinary(imageBuffer, "tour-images");
+      imageData = data
+    }
 
     const newTour = await Tour.create({
       title,
@@ -47,8 +56,8 @@ const createTour = async (req, res, next) => {
       tags,
       startDate,
       endDate,
-      // questionImageUrl: imageData.url,
-      // questionImagePublicId: imageData.public_id,
+      tourCoverImageUrl: imageData.url,
+      tourCoverImagePublicId: imageData.public_id,
       creatorName: req.user.firstName, // Change to business name
       creatorId: req.user._id,
     });
@@ -85,7 +94,52 @@ const getAllPublicTours = async (req, res, next) => {
   }
 };
 
-// Get single question
+const addImages = async (req, res, next) => {
+  try {
+    const id = req.user._id;
+    const user = await Creator.findById(id);
+    if (!user) {
+      return next(new AppError("Creator not found", 404));
+    }
+
+    const tourId = req.params.tourId;
+
+    const tour = await Tour.findById(tourId);
+
+    if (!tour) {
+      return next(new AppError("Tour not found", 404));
+    }
+
+    let imageData = [];
+
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const imageBuffer = req.files[i].buffer;
+        const data = await uploadToCloudinary(imageBuffer, "tour-images");
+        // Save the URL of the uploaded image to the tour model
+        tour.tourImagesUrl.push(data.url);
+        // Optionally, save the public ID of the uploaded image to the tour model
+        // tour.tourImagesPublicIds.push(data.public_id);
+        imageData.push(data);
+      }
+    }
+
+    // Save the updated tour model
+    await tour.save();
+
+    return res.status(200).json({
+      status: "success",
+      message: "Images uploaded successfully",
+      images: imageData,
+      tour
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// Get single tour
 const getAPublicTour = async (req, res, next) => {
   try {
     const id = req.params.tourId;
@@ -340,6 +394,8 @@ const joinATour = async (req, res, next) => {
     // Add the tour ID to the user's tours array
     user.tours.push(tourId);
 
+    
+
     // Save the updated user document
     await user.save();
 
@@ -421,6 +477,9 @@ const getAllRegTourDetails = async (req, res, next) => {
 
 module.exports = {
   createTour,
+  addImages,
+  uploadTourPicture,
+  uploadMultiplePictures,
   getAllPublicTours,
   getAPublicTour,
   getCreatourTours,

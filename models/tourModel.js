@@ -6,7 +6,7 @@ const TourSchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, "Title is compulsory"],
-      unique: true,
+      // unique: [true, "There's a tour with this name already"],
       trim: true,
     },
     description: {
@@ -59,15 +59,9 @@ const TourSchema = new mongoose.Schema(
       default: 0,
     },
     tags: [String],
-    tourImagesUrl: {
-      type: [
-        {
-          type: String,
-          required: true,
-        },
-      ],
-      default: [],
-    },
+    tourCoverImageUrl: String,
+    tourCoverImagePublicId: String,
+    tourImagesUrl: [String],
     state: {
       type: String,
       default: "draft",

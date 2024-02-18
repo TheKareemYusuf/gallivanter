@@ -57,7 +57,15 @@ const UserSchema = new mongoose.Schema(
       ],
       default: []
     },
-    phoneNumber: String,
+    phoneNumber: {
+      type: String,
+      required: function () {
+        return this.isNew || this.isModified("password");
+      },
+      // required: [true, "Phone number is required"],
+      match: /^\d{11}$/,
+      unique: true,
+    },
     address: String,
     // Other relevant fields
     // You can add more fields as needed

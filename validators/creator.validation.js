@@ -30,7 +30,7 @@ const CreatorSchema = Joi.object({
   status: Joi.string(),
   gender: Joi.string(),
   companyName: Joi.string(),
-  phoneNumber: Joi.string(),
+  phoneNumber: Joi.string().regex(/^\d{11}$/).optional(),
   // creatorSubjectOfInterest: Joi.array().items(Joi.string())
  
 });

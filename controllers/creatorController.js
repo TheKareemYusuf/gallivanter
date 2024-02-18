@@ -20,10 +20,6 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 const getAllCreators = async (req, res, next) => {
-  // res.status(200).json({
-  //   status: "success",
-  //   data: "display all creators here",
-  // });
   try {
     // const id = req.user._id;
 

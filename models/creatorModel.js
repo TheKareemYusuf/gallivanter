@@ -68,7 +68,12 @@ const CreatorSchema = new mongoose.Schema({
     enum: ["active", "non-active", "deactivated"],
     default: "active",
   },
-  companyName: String,
+  companyName: {
+    type: String,
+    unique: true,
+    required: [true, "Please enter your company name"],
+    trim: true,
+  },
   address: String,
 },
 { timestamps: true });
