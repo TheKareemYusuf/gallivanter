@@ -21,6 +21,13 @@ router
   );
 
 router
+  .route("/members")
+  .get(
+    passport.authenticate("jwt", { session: false }),
+    tourController.getCreatorToursRegMembers
+  );
+
+router
   .route("/:tourId")
   .get(
     passport.authenticate("jwt", { session: false }),
@@ -33,22 +40,22 @@ router
   .patch(
     passport.authenticate("jwt", { session: false }),
     tourController.updateTourState
-  )
+  );
 
-  router
+router
   .route("/:tourId/members")
   .get(
     passport.authenticate("jwt", { session: false }),
     tourController.getTourRegMembers
-  )
+  );
 
-  router
+router
   .route("/:tourId/upload-images")
   .patch(
     passport.authenticate("jwt", { session: false }),
     tourController.uploadMultiplePictures,
     tourController.addImages
-  )
+  );
 //   .delete(
 //     passport.authenticate("jwt", { session: false }),
 //     restrictToMW.restrictTo("admin"),
