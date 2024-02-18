@@ -4,11 +4,10 @@ const jwt = require("jsonwebtoken");
 const CONFIG = require("./../config/config");
 
 const authRouter = express.Router();
-const userValidationMW = require('./../validators/user.validation');
-
+const userValidationMW = require("./../validators/user.validation");
 
 authRouter.post(
-  "/signup", 
+  "/signup",
   userValidationMW,
   passport.authenticate("user-signup", { session: false }),
   async (req, res, next) => {
@@ -21,11 +20,11 @@ authRouter.post(
       expiresIn: "12h",
     });
 
-
     // Remove password from output
     req.user.password = undefined;
 
-    res.json({
+    res.status(200).json({
+      status: "success",
       message: "Signup successful",
       user: req.user,
       token,
@@ -51,15 +50,14 @@ authRouter.post("/login", async (req, res, next) => {
           _id: req.user._id,
           email: req.user.email,
           firstName: req.user.firstName,
-
         };
         const token = jwt.sign({ user: body }, CONFIG.SECRET_KEY, {
           expiresIn: "12h",
         });
 
-      
-
-        return res.json({
+        return res.status(200).json({
+          status: "success",
+          message: "Signup successful",
           firstName: user.firstName,
           email: user.email,
           token,
@@ -70,7 +68,5 @@ authRouter.post("/login", async (req, res, next) => {
     }
   })(req, res, next);
 });
-
-
 
 module.exports = authRouter;

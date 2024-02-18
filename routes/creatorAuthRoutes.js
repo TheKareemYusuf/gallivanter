@@ -25,7 +25,8 @@ authRouter.post(
     // Remove password from output
     req.user.password = undefined;
 
-    res.json({
+    res.status(200).json({
+      status: "success",
       message: "Signup successful",
       user: req.user,
       token,
@@ -56,7 +57,9 @@ authRouter.post("/login", async (req, res, next) => {
           expiresIn: "12h",
         });
 
-        return res.json({
+        return res.status(200).json({
+          status: "success",
+          message: "Login successful",
           firstName: user.firstName,
           email: user.email,
           role: user.role,
