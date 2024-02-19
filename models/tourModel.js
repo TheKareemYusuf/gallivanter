@@ -24,6 +24,11 @@ const TourSchema = new mongoose.Schema(
       // get the creator from creatorSchema
       ref: "Creator",
     },
+    companyName: {
+      type: String,
+      // get the creator from creatorSchema
+      ref: "Creator",
+    },
     location: {
       type: String,
       required: true,
@@ -59,6 +64,7 @@ const TourSchema = new mongoose.Schema(
       default: 0,
     },
     tags: [String],
+    itenary: [String],
     tourCoverImageUrl: String,
     tourCoverImagePublicId: String,
     tourImagesUrl: [String],

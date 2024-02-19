@@ -4,6 +4,8 @@ const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
 const Creator = require("../models/creatorModel");
 const uploadPicture = require("../utils/multerImageHandler");
+const sendEmail = require("../utils/email");
+
 // const multer = require("multer");
 // const sharp = require("sharp");
 
@@ -391,14 +393,7 @@ const joinATour = async (req, res, next) => {
 
     // Check if user is already registered for the tour
     if (tour.regMembers.includes(userId)) {
-      // return next(
-      //   new AppError("You are already registered for this tour", 400)
-      // );
-
-      return res.status(200).json({
-        status: "success",
-        message: "You are already registered for this tour",
-      });
+      return next(new AppError("You are already registered for this tour", 400));
     }
 
     if (!tour) {
@@ -421,6 +416,8 @@ const joinATour = async (req, res, next) => {
 
     // Update the user model to include the tour
     const user = await User.findById(userId);
+    const userEmail = user.email;
+    const tourTitle = tour.title;
 
     if (!user) {
       return next(new AppError("User not found", 404));
@@ -432,13 +429,21 @@ const joinATour = async (req, res, next) => {
     // Save the updated user document
     await user.save();
 
-    return res
-      .status(200)
-      .json({ status: "success", message: "Joined the tour successfully" });
+    // Send confirmation email
+    const message = `Dear ${user.firstName},\n\nThank you for registering for the ${tourTitle} tour! We are excited to have you onboard. Your registration for the tour is confirmed.\n\nWe look forward to seeing you on the tour!\n\nWarm regards,\nYour Tour Team`;
+    
+    await sendEmail({
+      email: userEmail,
+      subject: "Tour Registration Confirmation",
+      message,
+    });
+
+    return res.status(200).json({ status: "success", message: "Joined the tour successfully" });
   } catch (error) {
     next(error);
   }
 };
+
 
 const getRegTourDetails = async (req, res, next) => {
   try {
