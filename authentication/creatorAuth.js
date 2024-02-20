@@ -64,7 +64,7 @@ passport.use(
      
       if (!user) {
         // return next(null, false, { message: "User not found" });
-        return next(new AppError("This user does not exist", 404));
+        return next(new AppError("Username or Password is incorrect", 404));
       }
 
       const validate = await user.isValidPassword(password);
