@@ -3,6 +3,7 @@ const passport = require("passport");
 const tourController = require("../controllers/tourController");
 const TourValidationMW = require("../validators/tour.validator");
 const restrictToMW = require("../authentication/restrictionHandler");
+const itineraryController = require("../controllers/itineraryController");
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router
   )
   .post(
     passport.authenticate("jwt", { session: false }),
-    tourController.uploadTourPicture,
+    // tourController.uploadTourPicture,
     // questionController.resizeQuestionPicture,
     TourValidationMW,
     tourController.createTour
@@ -25,6 +26,14 @@ router
   .get(
     passport.authenticate("jwt", { session: false }),
     tourController.getCreatorToursRegMembers
+  );
+
+router
+  .route("/images")
+  .post(
+    passport.authenticate("jwt", { session: false }),
+    tourController.uploadMultiplePictures,
+    tourController.uploadImages
   );
 
 router
@@ -47,6 +56,32 @@ router
   .get(
     passport.authenticate("jwt", { session: false }),
     tourController.getTourRegMembers
+  );
+
+router
+  .route("/:tourId/itinerary")
+  .post(
+    passport.authenticate("jwt", { session: false }),
+    itineraryController.createItinerary
+  )
+  .get(
+    passport.authenticate("jwt", { session: false }),
+    itineraryController.getALlItinerary
+  );
+
+router
+  .route("/:tourId/itinerary/:itineraryId")
+  .get(
+    passport.authenticate("jwt", { session: false }),
+    itineraryController.getOneItinerary
+  )
+  .put(
+    passport.authenticate("jwt", { session: false }),
+    itineraryController.updateItinerary
+  )
+  .delete(
+    passport.authenticate("jwt", { session: false }),
+    itineraryController.deleteItinerary
   );
 
 router

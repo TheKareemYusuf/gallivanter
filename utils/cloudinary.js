@@ -10,20 +10,8 @@ cloudinary.config({
   api_secret: CONFIG.CLOUDINARY_API_SECRET,
 });
 
-// These tow functions that cloudinary provide us, such as upload and destroy
-// uploadToCloudinary = async (path, folder) => {
-//   try {
-//     const data = await cloudinary.uploader
-//       .upload(path, {
-//         folder
-//       });
-//     return { url: data.url, public_id: data.public_id };
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
 uploadToCloudinary = async (buffer, folder) => {
+
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
@@ -46,6 +34,20 @@ uploadToCloudinary = async (buffer, folder) => {
     streamifier.createReadStream(buffer).pipe(uploadStream);
   });
 };
+
+// uploadToCloudinary = async (file, folder) => {
+//   return new Promise(resolve => {
+//     cloudinary.uploader.upload(file, (result) => {
+//       resolve({
+//         url: result.url,
+//         public_id: result.public_id
+//       })
+//     }, {
+//       resource_type: "auto",
+//       folder: folder
+//     })
+//   })
+// }
 
 removeFromCloudinary = async (public_id) => {
   await cloudinary.uploader.destroy(public_id, function (error, result) {

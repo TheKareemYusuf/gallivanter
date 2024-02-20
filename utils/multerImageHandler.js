@@ -1,6 +1,10 @@
 const multer = require("multer");
+const AppError = require('./appError');
+
+// const multerStorage = multer.memoryStorage();
 
 const multerStorage = multer.memoryStorage();
+
 
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {

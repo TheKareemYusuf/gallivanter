@@ -27,6 +27,9 @@ const createTour = async (req, res, next) => {
       return next(new AppError("Creator not found", 404));
     }
 
+    // const imageData = await uploadToCloudinary(req.file.buffer, "tour-images");
+
+    // Extract tour details from request body
     const {
       title,
       description,
@@ -39,14 +42,7 @@ const createTour = async (req, res, next) => {
       endDate,
     } = req.body;
 
-    let imageData = {};
-
-    if (req.file) {
-      const imageBuffer = req.file.buffer;
-      const data = await uploadToCloudinary(imageBuffer, "tour-images");
-      imageData = data;
-    }
-
+    // Save tour details to the database, including the image URL and ID
     const newTour = await Tour.create({
       title,
       description,
@@ -57,17 +53,63 @@ const createTour = async (req, res, next) => {
       tags,
       startDate,
       endDate,
-      tourCoverImageUrl: imageData.url,
-      tourCoverImagePublicId: imageData.public_id,
+      companyName: user.companyName,
       creatorName: req.user.firstName, // Change to business name
       creatorId: req.user._id,
     });
 
-    res.status(201).json({
+    // Construct response object with image URL and ID
+    const response = {
       status: "success",
       message: "Tour created successfully",
       data: newTour,
-    });
+    };
+
+    // Send response to frontend
+    res.status(201).json(response);
+
+
+    // const {
+    //   title,
+    //   description,
+    //   location,
+    //   numOfDays,
+    //   price,
+    //   maxCapacity,
+    //   tags,
+    //   startDate,
+    //   endDate,
+    // } = req.body;
+
+    // let imageData = {};
+
+    // if (req.file) {
+    //   const imageBuffer = req.file.buffer;
+    //   const data = await uploadToCloudinary(imageBuffer, "tour-images");
+    //   imageData = data;
+    // }
+
+    // const newTour = await Tour.create({
+    //   title,
+    //   description,
+    //   location,
+    //   numOfDays,
+    //   price,
+    //   maxCapacity,
+    //   tags,
+    //   startDate,
+    //   endDate,
+    //   tourCoverImageUrl: imageData.url,
+    //   tourCoverImagePublicId: imageData.public_id,
+    //   creatorName: req.user.firstName, // Change to business name
+    //   creatorId: req.user._id,
+    // });
+
+    // res.status(201).json({
+    //   status: "success",
+    //   message: "Tour created successfully",
+    //   data: newTour,
+    // });
   } catch (error) {
     next(error);
   }
@@ -131,8 +173,40 @@ const addImages = async (req, res, next) => {
     return res.status(200).json({
       status: "success",
       message: "Images uploaded successfully",
-      images: imageData,
-      tour,
+      images: imageData
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Upload images 
+const uploadImages = async (req, res, next) => {
+  try {
+    // const id = req.user._id;
+    // const user = await Creator.findById(id);
+    // if (!user) {
+    //   return next(new AppError("Creator not found", 404));
+    // }
+
+
+    let imageData = [];
+
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const imageBuffer = req.files[i].buffer;
+        const data = await uploadToCloudinary(imageBuffer, "tour-images");
+   
+        imageData.push(data);
+      }
+    }
+
+   
+
+    return res.status(200).json({
+      status: "success",
+      message: "Images uploaded successfully",
+      images: imageData
     });
   } catch (error) {
     next(error);
@@ -255,15 +329,57 @@ const getTourRegMembers = async (req, res, next) => {
     // Fetch user details using the user IDs
     const regUsers = await User.find({ _id: { $in: regUserIds } });
 
+    const data = {
+      firstName: regUsers.firstName,
+      lastName: regUsers.lastName,
+      email: regUsers.email,
+    }
+
     return res.status(200).json({
       status: "success",
       message: "Registered users for the tour retrieved successfully",
-      regUsers,
+      data
     });
   } catch (error) {
     next(error);
   }
 };
+
+// const getCreatorToursRegMembers = async (req, res, next) => {
+//   try {
+//     // Get the creator id
+//     const creatorId = req.user._id;
+
+//     // Find all tours created by the creator
+//     const creatorTours = await Tour.find({ creatorId });
+
+//     if (!creatorTours || creatorTours.length === 0) {
+//       return next(new AppError("No tours found for the creator", 404));
+//     }
+
+//     // Collect all registered member IDs from all tours
+//     let regMemberIds = [];
+//     creatorTours.forEach((tour) => {
+//       regMemberIds = regMemberIds.concat(tour.regMembers);
+//     });
+
+//     // Fetch details of the registered members
+//     // const regMembers = await User.find({ _id: { $in: regMemberIds } });
+
+//     // Fetch details of the registered members (only select specified fields)
+//     const regMembers = await User.find({ _id: { $in: regMemberIds } }).select(
+//       "firstName lastName email phoneNumber "
+//     );
+
+//     return res.status(200).json({
+//       status: "success",
+//       message: "Registered members of all tours retrieved successfully",
+//       regMembers,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 const getCreatorToursRegMembers = async (req, res, next) => {
   try {
@@ -277,29 +393,40 @@ const getCreatorToursRegMembers = async (req, res, next) => {
       return next(new AppError("No tours found for the creator", 404));
     }
 
-    // Collect all registered member IDs from all tours
-    let regMemberIds = [];
-    creatorTours.forEach((tour) => {
-      regMemberIds = regMemberIds.concat(tour.regMembers);
-    });
+    // Prepare an array to hold registered members with tour titles
+    let regMembersWithTours = [];
 
-    // Fetch details of the registered members
-    // const regMembers = await User.find({ _id: { $in: regMemberIds } });
+    // Loop through each tour to find its registered members
+    for (let i = 0; i < creatorTours.length; i++) {
+      const tour = creatorTours[i];
 
-    // Fetch details of the registered members (only select specified fields)
-    const regMembers = await User.find({ _id: { $in: regMemberIds } }).select(
-      "firstName lastName email phoneNumber"
-    );
+      // Fetch details of the registered members for this tour
+      const regMembers = await User.find({ _id: { $in: tour.regMembers } }).select(
+        "firstName lastName email phoneNumber"
+      );
+
+      // For each registered member, attach the tour title
+      regMembers.forEach((member) => {
+        regMembersWithTours.push({
+          firstName: member.firstName,
+          lastName: member.lastName,
+          email: member.email,
+          phoneNumber: member.phoneNumber,
+          tourTitle: tour.title,
+        });
+      });
+    }
 
     return res.status(200).json({
       status: "success",
       message: "Registered members of all tours retrieved successfully",
-      regMembers,
+      regMembers: regMembersWithTours,
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 const updateTour = async (req, res, next) => {
   try {
@@ -393,7 +520,7 @@ const joinATour = async (req, res, next) => {
 
     // Check if user is already registered for the tour
     if (tour.regMembers.includes(userId)) {
-      return next(new AppError("You are already registered for this tour", 400));
+      return next(new AppError("You are already registered for this tour",200));
     }
 
     if (!tour) {
@@ -512,6 +639,7 @@ const getAllRegTourDetails = async (req, res, next) => {
 module.exports = {
   createTour,
   addImages,
+  uploadImages,
   uploadTourPicture,
   uploadMultiplePictures,
   getAllPublicTours,

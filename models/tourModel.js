@@ -1,12 +1,31 @@
 // const { string } = require("joi");
 const mongoose = require("mongoose");
 
+const ItinerarySchema = new mongoose.Schema({
+  day: {
+    type: Number,
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  image: {
+    type: String,
+    required: true
+  }
+});
+
 const TourSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: [true, "Title is compulsory"],
-      // unique: [true, "There's a tour with this name already"],
+      unique: [true, "There's a tour with this name already"],
       trim: true,
     },
     description: {
@@ -64,7 +83,7 @@ const TourSchema = new mongoose.Schema(
       default: 0,
     },
     tags: [String],
-    itenary: [String],
+    itinerary: [ItinerarySchema],
     tourCoverImageUrl: String,
     tourCoverImagePublicId: String,
     tourImagesUrl: [String],
