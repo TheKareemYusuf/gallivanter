@@ -16,9 +16,9 @@
 //     const uploadStream = cloudinary.uploader.upload_stream(
 //       {
 //         folder,
-//         transformation: [
-//           { quality: "auto:low" }, // You can adjust the quality level as needed
-//         ],
+//         // transformation: [
+//         //   { quality: "auto:low" }, // You can adjust the quality level as needed
+//         // ],
 //       },
 //       (error, result) => {
 //         if (error) {
@@ -57,6 +57,40 @@
 
 // module.exports = { uploadToCloudinary, removeFromCloudinary };
 
+// --------------------------------------------
+// const cloudinary = require("cloudinary").v2;
+// const CONFIG = require("./../config/config");
+
+// cloudinary.config({
+//   cloud_name: CONFIG.CLOUDINARY_NAME,
+//   api_key: CONFIG.CLOUDINARY_API_KEY,
+//   api_secret: CONFIG.CLOUDINARY_API_SECRET,
+// });
+
+// uploadToCloudinary = async (filePath, folder) => {
+//   return new Promise((resolve, reject) => {
+//     cloudinary.uploader.upload(filePath, {
+//       folder,
+//       transformation: [{ quality: "auto:low" }]
+//     }, (error, result) => {
+//       if (error) {
+//         console.log("Upload error:", error);
+//         reject(error);
+//       } else {
+//         resolve({ url: result.url, public_id: result.public_id });
+//       }
+//     });
+//   });
+// };
+
+// removeFromCloudinary = async (public_id) => {
+//   await cloudinary.uploader.destroy(public_id, function (error, result) {
+//     console.log(result, error);
+//   });
+// };
+
+// module.exports = { uploadToCloudinary, removeFromCloudinary };
+
 const cloudinary = require("cloudinary").v2;
 const CONFIG = require("./../config/config");
 
@@ -66,25 +100,37 @@ cloudinary.config({
   api_secret: CONFIG.CLOUDINARY_API_SECRET,
 });
 
-uploadToCloudinary = async (filePath, folder) => {
+const uploadToCloudinary = async (file, folder) => {
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(filePath, {
-      folder,
-      transformation: [{ quality: "auto:low" }]
-    }, (error, result) => {
-      if (error) {
-        console.log("Upload error:", error);
-        reject(error);
-      } else {
-        resolve({ url: result.url, public_id: result.public_id });
+    cloudinary.uploader.upload(
+      file, // Using tempFilePath assuming you are using Multer
+      {
+        folder,
+        transformation: [{ quality: "auto:low" }],
+      },
+      (error, result) => {
+        if (error) {
+          console.log("Upload error:", error);
+          reject(error);
+        } else {
+          resolve({ url: result.url, public_id: result.public_id });
+        }
       }
-    });
+    );
   });
 };
 
-removeFromCloudinary = async (public_id) => {
-  await cloudinary.uploader.destroy(public_id, function (error, result) {
-    console.log(result, error);
+const removeFromCloudinary = async (public_id) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.destroy(public_id, (error, result) => {
+      if (error) {
+        console.log("Removal error:", error);
+        reject(error);
+      } else {
+        console.log("Removal result:", result);
+        resolve(result);
+      }
+    });
   });
 };
 

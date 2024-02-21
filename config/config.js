@@ -1,6 +1,9 @@
 require("dotenv").config();
+const root = require('app-root-path');
+
 
 module.exports = {
+  uploadPath: `${root.path}/.temp/upload`,
   PORT: process.env.PORT,
   DATABASE_URL: process.env.DATABASE_URL,
   SECRET_KEY: process.env.SECRET_KEY,

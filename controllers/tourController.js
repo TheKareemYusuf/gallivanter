@@ -193,8 +193,9 @@ const uploadImages = async (req, res, next) => {
     let imageData = [];
 
     if (req.files && req.files.length > 0) {
+      console.log(req.files);
       for (let i = 0; i < req.files.length; i++) {
-        const imageBuffer = req.files[i].buffer;
+        const imageBuffer = req.files[i].path;
         const data = await uploadToCloudinary(imageBuffer, "tour-images");
    
         imageData.push(data);
