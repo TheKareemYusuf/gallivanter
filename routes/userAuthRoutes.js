@@ -12,6 +12,7 @@ authRouter.post(
   passport.authenticate("user-signup", { session: false }),
   async (req, res, next) => {
     const body = {
+      role: req.user.role,
       _id: req.user._id,
       email: req.user.email,
       firstName: req.user.firstName,
@@ -39,7 +40,7 @@ authRouter.post("/login", async (req, res, next) => {
         return next(err);
       }
       if (!user) {
-        const error = new Error("Username or password is incorrect");
+        const error = new AppError("Username or password is incorrect", 504);
         return next(error);
       }
 
@@ -47,9 +48,10 @@ authRouter.post("/login", async (req, res, next) => {
         if (error) return next(error);
 
         const body = {
-          _id: req.user._id,
-          email: req.user.email,
-          firstName: req.user.firstName,
+          role: user.role,
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
         };
         const token = jwt.sign({ user: body }, CONFIG.SECRET_KEY, {
           expiresIn: "12h",
@@ -58,6 +60,7 @@ authRouter.post("/login", async (req, res, next) => {
         return res.status(200).json({
           status: "success",
           message: "Signup successful",
+          role: user.role,
           firstName: user.firstName,
           email: user.email,
           token,

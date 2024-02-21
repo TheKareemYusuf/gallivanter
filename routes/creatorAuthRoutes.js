@@ -14,6 +14,7 @@ authRouter.post(
   passport.authenticate("creator-signup", { session: false }),
   async (req, res, next) => {
     const body = {
+      role: req.user.role,
       _id: req.user._id,
       email: req.user.email,
       firstName: req.user.firstName,
@@ -49,6 +50,7 @@ authRouter.post("/login", async (req, res, next) => {
         if (error) return next(error);
 
         const body = {
+          role: user.role,
           _id: user._id,
           email: user.email,
           firstName: user.firstName,
