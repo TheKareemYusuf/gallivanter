@@ -1,7 +1,7 @@
 const passport = require("passport");
 const passportCustom = require("passport-custom");
 const CONFIG = require("./../config/config");
-const AppError = require('./../utils/appError');
+const AppError = require("./../utils/appError");
 
 const User = require("./../models/userModel");
 
@@ -28,7 +28,15 @@ passport.use(
   "user-signup",
   new passportCustom(async (req, next) => {
     try {
-      const { firstName, lastName, email, password, confirmPassword, phoneNumber } = req.body;
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        phoneNumber,
+        agreed_to_terms,
+      } = req.body;
 
       // Check if a user with the provided username exists
       // const existingEmail = await User.findOne({ email });
@@ -36,13 +44,20 @@ passport.use(
       //   return next(null, false, { message: "Email is already registered" });
       // }
 
+      if (agreed_to_terms === false) {
+        return next(
+          new AppError("Please agree to our terms and condition", 404)
+        );
+      }
+
       const user = await User.create({
         firstName,
         lastName,
         email,
         password,
         confirmPassword,
-        phoneNumber
+        phoneNumber,
+        agreed_to_terms,
       });
 
       return next(null, user);
@@ -58,15 +73,17 @@ passport.use(
     try {
       const { email, password } = req.body;
       // const user = await User.findOne({ phoneNumber });
-      const user = await User.findOne({email}).select("+password");
+      const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
-        return next(new AppError("Username or Password is incorrect", 404))      }
+        return next(new AppError("Username or Password is incorrect", 404));
+      }
 
       const validate = await user.isValidPassword(password);
 
       if (!validate) {
-        return next(new AppError("Username or Password is incorrect", 404))      }
+        return next(new AppError("Username or Password is incorrect", 404));
+      }
 
       return next(null, user, { message: "Logged in Successfully" });
     } catch (error) {

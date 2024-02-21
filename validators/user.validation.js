@@ -23,6 +23,8 @@ const UserSchema = Joi.object({
   levelOfStudy: Joi.string(),
   department: Joi.string().valid("arts", "sciences", "commercials").optional(),
   subjectOfInterest: Joi.array().items(Joi.string()),
+  agreed_to_terms: Joi.bool(),
+
 
 
   // bankDetails: {

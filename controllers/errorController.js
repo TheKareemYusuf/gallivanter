@@ -19,6 +19,20 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleValidationError = (err) => {
+    // Extract the path and message of the validation error
+    const path = Object.keys(err.errors)[0];
+    const errorMessage = err.errors[path].message;
+
+    // Construct a meaningful error message
+    const message = `${path}: ${errorMessage}`;
+
+    // Return an object with the error message and status code
+    return new AppError(message, 400);
+
+  } 
+
+
 const handleJWTError = () =>
   new AppError("Invalid token. Please log in again!", 401);
 
@@ -69,8 +83,7 @@ const errorHandler = (err, req, res, next) => {
 
     if (error.name === "CastError") error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (error.name === "ValidationError")
-      error = handleValidationErrorDB(error);
+    if (error.name === "ValidationError") error = handleValidationErrorDB(error);       
     if (error.name === "JsonWebTokenError") error = handleJWTError();
     if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
 

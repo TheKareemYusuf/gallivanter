@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 const validator = require("validator");
 
 const UserSchema = new mongoose.Schema(
@@ -51,11 +51,11 @@ const UserSchema = new mongoose.Schema(
     },
     tours: {
       type: [
-        { 
+        {
           type: mongoose.Schema.Types.ObjectId,
         },
       ],
-      default: []
+      default: [],
     },
     phoneNumber: {
       type: String,
@@ -67,9 +67,15 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     address: String,
-    // Other relevant fields
-    // You can add more fields as needed
-    // For example: nationality, date of birth, etc.
+    agreed_to_terms: {
+      type: Boolean,
+      default: false, // Set default value to false
+      // required: [true, "Please agree to terms"]
+    },
+    role: {
+      type: String,
+      default: "user",
+    },
   },
   { timestamps: true }
 );

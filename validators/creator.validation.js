@@ -31,8 +31,7 @@ const CreatorSchema = Joi.object({
   gender: Joi.string(),
   companyName: Joi.string(),
   phoneNumber: Joi.string().regex(/^\d{11}$/).optional(),
-  // creatorSubjectOfInterest: Joi.array().items(Joi.string())
- 
+  agreed_to_terms: Joi.bool(),
 });
  
 async function CreatorValidationMW(req, res, next) {

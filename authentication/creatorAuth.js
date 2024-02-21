@@ -35,8 +35,14 @@ passport.use(
         password,
         confirmPassword,
         phoneNumber,
-        companyName
+        companyName,
+        agreed_to_terms,
       } = req.body;
+
+      if (agreed_to_terms === false) {
+        return next(new AppError("Please agree to our terms and condition", 404));
+
+      }
       const user = await Creator.create({
         email,
         firstName,
@@ -44,7 +50,8 @@ passport.use(
         password,
         confirmPassword,
         phoneNumber,
-        companyName
+        companyName,
+        agreed_to_terms
       });
 
       return next(null, user);

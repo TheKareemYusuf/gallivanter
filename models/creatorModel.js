@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
+const { boolean } = require("joi");
 
 const CreatorSchema = new mongoose.Schema({
   firstName: {
@@ -75,6 +76,15 @@ const CreatorSchema = new mongoose.Schema({
     trim: true,
   },
   address: String,
+  agreed_to_terms: {
+    type: Boolean,
+    default: false, // Set default value to false
+    // required: [true, "Please agree to terms"]
+  }, 
+  role: {
+    type: String,
+    default: "creator",
+  },
 },
 { timestamps: true });
 
