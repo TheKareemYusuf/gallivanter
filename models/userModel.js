@@ -66,6 +66,14 @@ const UserSchema = new mongoose.Schema(
       match: /^\d{11}$/,
       unique: true,
     },
+    creatorImageUrl: {
+      type: String,
+      default: "http://res.cloudinary.com/dzodph4o8/image/upload/v1693051381/creator-images/qa3cdrcltw6rtgejgst2.webp"
+    },
+    creatorImagePublicId: {
+      type: String,
+      default: "creator-images/qa3cdrcltw6rtgejgst2"
+    },
     address: String,
     agreed_to_terms: {
       type: Boolean,
