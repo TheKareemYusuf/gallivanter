@@ -389,9 +389,9 @@ const getCreatorToursRegMembers = async (req, res, next) => {
     // Find all tours created by the creator
     const creatorTours = await Tour.find({ creatorId });
 
-    if (!creatorTours || creatorTours.length === 0) {
-      return next(new AppError("No tours found for the creator", 404));
-    }
+    // if (!creatorTours || creatorTours.length === 0) {
+    //   return next(new AppError("No tours found for the creator", 404));
+    // }
 
     // Prepare an array to hold registered members with tour titles
     let regMembersWithTours = [];

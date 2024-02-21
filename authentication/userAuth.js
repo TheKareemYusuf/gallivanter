@@ -42,8 +42,7 @@ passport.use(
         email,
         password,
         confirmPassword,
-        phoneNumber,
-        companyName
+        phoneNumber
       });
 
       return next(null, user);
