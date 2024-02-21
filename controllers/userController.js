@@ -116,9 +116,8 @@ const updateUserProfile = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      data: {
-        user: updatedUser,
-      },
+      data: updatedUser,
+    
     });
   } catch (error) {
     next(error);

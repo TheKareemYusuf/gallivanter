@@ -59,9 +59,6 @@ const UserSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      required: function () {
-        return this.isNew || this.isModified("password");
-      },
       // required: [true, "Phone number is required"],
       match: /^\d{11}$/,
       unique: true,
