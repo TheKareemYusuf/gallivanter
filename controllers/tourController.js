@@ -433,9 +433,8 @@ const updateTour = async (req, res, next) => {
     let tourUpdate = { ...req.body };
     const id = req.params.tourId;
     const creatorId = req.user._id;
-    console.log(creatorId);
 
-    if (tourUpdate.state) delete tourUpdate.state;
+    tourUpdate.state = "published";
 
     const oldTour = await Tour.findById(id);
 
