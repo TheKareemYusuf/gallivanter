@@ -31,7 +31,7 @@ router
 router
   .route("/images")
   .post(
-    passport.authenticate("jwt", { session: false }),
+    // passport.authenticate("jwt", { session: false }),
     tourController.uploadMultiplePictures,
     tourController.uploadImages
   );
