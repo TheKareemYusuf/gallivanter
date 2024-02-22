@@ -3,8 +3,9 @@ const CONFIG = require('./config/config')
 const { connetToMongoDB } = require("./db");
 
 
-connetToMongoDB();
+connetToMongoDB()
 
 app.listen(CONFIG.PORT, () => {
     console.log(`app is listening on the port ${CONFIG.PORT}`);
-  });
+  }); 
+

@@ -193,7 +193,6 @@ const uploadImages = async (req, res, next) => {
     let imageData = [];
 
     if (req.files && req.files.length > 0) {
-      console.log(req.files);
       for (let i = 0; i < req.files.length; i++) {
         const imageBuffer = req.files[i].buffer;
         const data = await uploadToCloudinary(imageBuffer, "tour-images");
@@ -381,7 +380,7 @@ const getTourRegMembers = async (req, res, next) => {
 //     next(error);
 //   }
 // };
-
+ 
 const getCreatorToursRegMembers = async (req, res, next) => {
   try {
     // Get the creator id
