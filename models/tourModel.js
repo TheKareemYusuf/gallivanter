@@ -94,7 +94,7 @@ const TourSchema = new mongoose.Schema(
     tourImagesData: [ImageSchema],
     state: {
       type: String,
-      default: "published",
+      default: "draft",
       enum: ["draft", "published"],
     },
     startDate: {
