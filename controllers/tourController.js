@@ -572,6 +572,11 @@ const joinATour = async (req, res, next) => {
       return next(new AppError("No space available to join the tour", 400));
     }
 
+    // Check if the tour creator is not trying to join
+    if (userId.toString() === tour.creatorId.toString()) {
+      return next(new AppError("You cannot join this tour", 400));
+    }
+
     // Add user Id to the regMembers field of the tour model
     tour.regMembers.push(userId);
 
