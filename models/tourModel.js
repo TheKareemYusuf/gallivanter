@@ -20,6 +20,11 @@ const ItinerarySchema = new mongoose.Schema({
   }
 });
 
+const ImageSchema = new mongoose.Schema({
+  url: String,
+  publicId: String
+});
+
 const TourSchema = new mongoose.Schema(
   {
     title: {
@@ -86,7 +91,7 @@ const TourSchema = new mongoose.Schema(
     itinerary: [ItinerarySchema],
     tourCoverImageUrl: String,
     tourCoverImagePublicId: String,
-    tourImagesUrl: [String],
+    tourImagesData: [ImageSchema],
     state: {
       type: String,
       default: "published",

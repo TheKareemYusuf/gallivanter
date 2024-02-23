@@ -40,6 +40,7 @@ const createTour = async (req, res, next) => {
       tags,
       startDate,
       endDate,
+      tourImagesData,
     } = req.body;
 
     // Save tour details to the database, including the image URL and ID
@@ -53,6 +54,7 @@ const createTour = async (req, res, next) => {
       tags,
       startDate,
       endDate,
+      tourImagesData,
       companyName: user.companyName,
       creatorName: req.user.firstName, // Change to business name
       creatorId: req.user._id,
@@ -67,7 +69,6 @@ const createTour = async (req, res, next) => {
 
     // Send response to frontend
     res.status(201).json(response);
-
 
     // const {
     //   title,
@@ -173,14 +174,14 @@ const addImages = async (req, res, next) => {
     return res.status(200).json({
       status: "success",
       message: "Images uploaded successfully",
-      images: imageData
+      images: imageData,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// Upload images 
+// Upload images
 const uploadImages = async (req, res, next) => {
   try {
     // const id = req.user._id;
@@ -189,25 +190,64 @@ const uploadImages = async (req, res, next) => {
     //   return next(new AppError("Creator not found", 404));
     // }
 
-
     let imageData = [];
 
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const imageBuffer = req.files[i].buffer;
         const data = await uploadToCloudinary(imageBuffer, "tour-images");
-   
+
         imageData.push(data);
       }
     }
 
-   
-
     return res.status(200).json({
       status: "success",
       message: "Images uploaded successfully",
-      images: imageData
+      images: imageData,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// delete image
+
+const deleteImage = async (req, res, next) => {
+  try {
+    const { tourId, imageId } = req.body;
+
+    // Find the tour by ID
+    const tour = await Tour.findById(tourId);
+
+    if (!tour) {
+      return next(new AppError("Tour not found", 404));
+    }
+
+    // Find the index of the image to be deleted
+    const imageIndex = tour.tourImagesData.findIndex(
+      (image) => image.publicId === imageId
+    );
+
+    if (imageIndex === -1) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    // Get the public ID of the image
+    const publicId = tour.tourImagesData[imageIndex].publicId;
+
+    // Delete the image from Cloudinary
+    await removeFromCloudinary(publicId);
+
+    // Remove the image from the tour document
+    tour.tourImagesData.splice(imageIndex, 1);
+
+    // Save the updated tour document
+    await tour.save();
+
+    return res
+      .status(200)
+      .json({ status: "success", message: "Image deleted successfully" });
   } catch (error) {
     next(error);
   }
@@ -333,12 +373,12 @@ const getTourRegMembers = async (req, res, next) => {
       firstName: regUsers.firstName,
       lastName: regUsers.lastName,
       email: regUsers.email,
-    }
+    };
 
     return res.status(200).json({
       status: "success",
       message: "Registered users for the tour retrieved successfully",
-      data
+      data,
     });
   } catch (error) {
     next(error);
@@ -380,7 +420,7 @@ const getTourRegMembers = async (req, res, next) => {
 //     next(error);
 //   }
 // };
- 
+
 const getCreatorToursRegMembers = async (req, res, next) => {
   try {
     // Get the creator id
@@ -401,9 +441,9 @@ const getCreatorToursRegMembers = async (req, res, next) => {
       const tour = creatorTours[i];
 
       // Fetch details of the registered members for this tour
-      const regMembers = await User.find({ _id: { $in: tour.regMembers } }).select(
-        "firstName lastName email phoneNumber"
-      );
+      const regMembers = await User.find({
+        _id: { $in: tour.regMembers },
+      }).select("firstName lastName email phoneNumber");
 
       // For each registered member, attach the tour title
       regMembers.forEach((member) => {
@@ -426,7 +466,6 @@ const getCreatorToursRegMembers = async (req, res, next) => {
     next(error);
   }
 };
-
 
 const updateTour = async (req, res, next) => {
   try {
@@ -519,7 +558,9 @@ const joinATour = async (req, res, next) => {
 
     // Check if user is already registered for the tour
     if (tour.regMembers.includes(userId)) {
-      return next(new AppError("You are already registered for this tour",200));
+      return next(
+        new AppError("You are already registered for this tour", 200)
+      );
     }
 
     if (!tour) {
@@ -557,19 +598,20 @@ const joinATour = async (req, res, next) => {
 
     // Send confirmation email
     const message = `Dear ${user.firstName},\n\nThank you for registering for the ${tourTitle} tour! We are excited to have you onboard. Your registration for the tour is confirmed.\n\nWe look forward to seeing you on the tour!\n\nWarm regards,\nYour Tour Team`;
-    
+
     await sendEmail({
       email: userEmail,
       subject: "Tour Registration Confirmation",
       message,
     });
 
-    return res.status(200).json({ status: "success", message: "Joined the tour successfully" });
+    return res
+      .status(200)
+      .json({ status: "success", message: "Joined the tour successfully" });
   } catch (error) {
     next(error);
   }
 };
-
 
 const getRegTourDetails = async (req, res, next) => {
   try {
@@ -639,6 +681,7 @@ module.exports = {
   createTour,
   addImages,
   uploadImages,
+  deleteImage,
   uploadTourPicture,
   uploadMultiplePictures,
   getAllPublicTours,

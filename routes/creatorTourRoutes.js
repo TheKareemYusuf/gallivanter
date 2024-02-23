@@ -34,7 +34,8 @@ router
     // passport.authenticate("jwt", { session: false }),
     tourController.uploadMultiplePictures,
     tourController.uploadImages
-  );
+  )
+  .delete(tourController.deleteImage);
 
 router
   .route("/:tourId")
