@@ -8,7 +8,7 @@ const userValidationMW = require("./../validators/user.validation");
 
 authRouter.post(
   "/signup",
-  userValidationMW,
+  // userValidationMW,
   passport.authenticate("user-signup", { session: false }),
   async (req, res, next) => {
     const body = {

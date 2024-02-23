@@ -1,12 +1,12 @@
 const Joi = require("joi");
 
 const CreatorSchema = Joi.object({
-  firstName: Joi.string().min(2).max(50).when('$isNew', {
+  firstName: Joi.string().when('$isNew', {
     is: true,
     then: Joi.required(),
     otherwise: Joi.optional()
   }),
-  lastName: Joi.string().min(2).max(50).when('$isNew', {
+  lastName: Joi.string().when('$isNew', {
     is: true,
     then: Joi.required(),
     otherwise: Joi.optional()

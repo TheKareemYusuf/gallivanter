@@ -17,7 +17,7 @@ router
     passport.authenticate("jwt", { session: false }),
     // tourController.uploadTourPicture,
     // questionController.resizeQuestionPicture,
-    TourValidationMW,
+    // TourValidationMW,
     tourController.createTour
   );
 

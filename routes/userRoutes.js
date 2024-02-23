@@ -21,7 +21,7 @@ router
     userController.getUserProfile
   )
   .patch(
-    UserValidationMW,
+    // UserValidationMW,
     passport.authenticate("jwt", { session: false }),
     userController.updateUserProfile
   );

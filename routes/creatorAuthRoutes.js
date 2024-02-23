@@ -10,7 +10,7 @@ const CreatorValidationMW = require("./../validators/creator.validation");
 
 authRouter.post(
   "/signup",
-  CreatorValidationMW,
+  // CreatorValidationMW,
   passport.authenticate("creator-signup", { session: false }),
   async (req, res, next) => {
     const body = {
