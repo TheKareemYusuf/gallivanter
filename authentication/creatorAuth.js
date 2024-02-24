@@ -54,6 +54,7 @@ passport.use(
         agreed_to_terms
       });
 
+     
       return next(null, user);
     } catch (error) {
       next(error);
