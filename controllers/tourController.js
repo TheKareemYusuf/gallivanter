@@ -669,8 +669,16 @@ const getAllRegTourDetails = async (req, res, next) => {
     // Get the tours field from the user document
     const tourIds = user.tours;
 
+    
     // Fetch tour details using the tourIds
-    const tours = await Tour.find({ _id: { $in: tourIds } });
+    const features = new APIFeatures(Tour.find({ _id: { $in: tourIds } }), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const tours = await features.query;
+
+    // const tours = await Tour.find({ _id: { $in: tourIds } });
 
     return res.status(200).json({
       status: "success",
