@@ -42,6 +42,7 @@ const createTour = async (req, res, next) => {
       startDate,
       endDate,
       tourImagesData,
+      currency
     } = req.body;
 
     // Save tour details to the database, including the image URL and ID
@@ -56,6 +57,7 @@ const createTour = async (req, res, next) => {
       startDate,
       endDate,
       tourImagesData,
+      currency,
       companyName: user.companyName,
       creatorName: req.user.firstName, // Change to business name
       creatorId: req.user._id,
