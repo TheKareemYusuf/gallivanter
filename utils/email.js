@@ -36,6 +36,7 @@ class sendEmail {
     this.url = url;
     this.tourTitle = tour.title;
     this.tourPrice = tour.price;
+    this.currency = tour.currency;
     this.from = `Rose from Gallivanter  <hello@gallivanter.ng>`;
   }
 
@@ -71,7 +72,8 @@ class sendEmail {
       url: this.url,
       subject,
       tourTitle: this.tourTitle,
-      tourPrice: this.tourPrice
+      tourPrice: this.tourPrice,
+      currency: this.currency,
     });
 
     // 2) Define email options
