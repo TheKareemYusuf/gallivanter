@@ -34,8 +34,9 @@ authRouter.post(
       token,
     });
 
+    const user = req.user
     const url = CONFIG.EXPLORE_PAGE
-    await new sendEmail(req.user, url).sendWelcome();
+    await new sendEmail(user, url).sendWelcome();
 
    } catch (error) {
     next(error)
