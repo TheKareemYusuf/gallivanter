@@ -67,7 +67,7 @@ const TourSchema = new mongoose.Schema(
     },
     currency: {
       type: String,
-      required: true,
+      // required: true,
     },
     maxCapacity: {
       type: Number,
