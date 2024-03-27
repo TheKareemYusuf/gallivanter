@@ -30,10 +30,12 @@ const { convert } = require('html-to-text');
 
 // from: "Kareem Yusuf  <hello@gmail.com>",
 class sendEmail {
-  constructor(user, url) {
+  constructor(user, url, tour = {}) {
     this.to = user.email;
     this.firstName = user.firstName;
     this.url = url;
+    this.tourTitle = tour.title;
+    this.tourPrice = tour.price;
     this.from = `Rose from Gallivanter  <hello@gallivanter.ng>`;
   }
 
@@ -67,7 +69,9 @@ class sendEmail {
     const html = pug.renderFile(templatePath, {
       firstName: this.firstName,
       url: this.url,
-      subject
+      subject,
+      tourTitle: this.tourTitle,
+      tourPrice: this.tourPrice
     });
 
     // 2) Define email options
@@ -91,6 +95,13 @@ class sendEmail {
     await this.send(
       'passwordReset',
       'Reset your password (valid for only 10 minutes)'
+    );
+  }
+
+  async sendTourRegConfirmation() {
+    await this.send(
+      'joinATour',
+      'Tour Registration Confirmation'
     );
   }
 };

@@ -21,4 +21,5 @@ module.exports = {
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
   EXPLORE_PAGE: process.env.EXPLORE_PAGE,
   RESET_URL: process.env.RESET_URL,
+  PAYSTACK_URL: process.env.PAYSTACK_URL,
 };
