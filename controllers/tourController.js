@@ -5,8 +5,7 @@ const APIFeatures = require("../utils/apiFeatures");
 const Creator = require("../models/creatorModel");
 const uploadPicture = require("../utils/multerImageHandler");
 const sendEmail = require("../utils/email");
-const CONFIG = require('./../config/config');
-
+const CONFIG = require("./../config/config");
 
 // const multer = require("multer");
 // const sharp = require("sharp");
@@ -592,7 +591,7 @@ const joinATour = async (req, res, next) => {
     const user = await User.findById(userId);
     const userEmail = user.email;
     const tourTitle = tour.title;
-    const tourPrice = tour.price
+    const tourPrice = tour.price;
 
     if (!user) {
       return next(new AppError("User not found", 404));
@@ -607,9 +606,7 @@ const joinATour = async (req, res, next) => {
     // Send confirmation email
     // const message = `Dear ${user.firstName},\n\nThank you for registering for the ${tourTitle} tour! We are excited to have you onboard. Your registration for the tour is confirmed.\n\nWe look forward to seeing you on the tour!\n\nWarm regards,\nYour Tour Team`;
 
-
-
-    const paymentUrl = CONFIG.PAYSTACK_URL
+    const paymentUrl = CONFIG.PAYSTACK_URL;
 
     // await sendEmail({
     //   email: userEmail,
@@ -621,7 +618,10 @@ const joinATour = async (req, res, next) => {
 
     return res
       .status(200)
-      .json({ status: "success", message: "Joined the tour successfully, please proceed to pay" });
+      .json({
+        status: "success",
+        message: "Tour joined successfully, please check your email and proceed to pay",
+      });
   } catch (error) {
     next(error);
   }
@@ -678,9 +678,11 @@ const getAllRegTourDetails = async (req, res, next) => {
     // Get the tours field from the user document
     const tourIds = user.tours;
 
-    
     // Fetch tour details using the tourIds
-    const features = new APIFeatures(Tour.find({ _id: { $in: tourIds } }), req.query)
+    const features = new APIFeatures(
+      Tour.find({ _id: { $in: tourIds } }),
+      req.query
+    )
       .filter()
       .sort()
       .limitFields()
