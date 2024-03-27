@@ -622,7 +622,7 @@ const joinATour = async (req, res, next) => {
       .status(200)
       .json({
         status: "success",
-        message: "Tour joined successfully, please check your email and proceed to pay",
+        message: `Tour joined successfully, click here to make payment ${paymentUrl} check your email and proceed to pay`,
       });
   } catch (error) {
     next(error);
