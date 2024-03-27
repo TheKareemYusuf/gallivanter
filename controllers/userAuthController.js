@@ -21,7 +21,7 @@ const forgotPassword = async (req, res, next) => {
             // 3) Send it to user's email
             const resetURL = `${req.protocol}://${req.get(
               'host'
-            )}${CONFIG.RESET_URL}/${resetToken}`;
+            )}/api/v1/users/profile/resetPassword/${resetToken}`;
           
           
 
