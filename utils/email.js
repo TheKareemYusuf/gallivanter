@@ -88,6 +88,7 @@ class sendEmail {
   }
 
   async sendWelcome() {
+    
     await this.send('welcome', 'Welcome to Gallivanter!');
   }
 

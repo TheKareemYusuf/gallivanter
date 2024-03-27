@@ -27,6 +27,10 @@ authRouter.post(
     // Remove password from output
     req.user.password = undefined;
 
+    const user = req.user
+    const url = CONFIG.EXPLORE_PAGE
+    await new sendEmail(user, url).sendWelcome();
+
     res.status(200).json({
       status: "success",
       message: "Signup successful",
@@ -34,9 +38,7 @@ authRouter.post(
       token,
     });
 
-    const user = req.user
-    const url = CONFIG.EXPLORE_PAGE
-    await new sendEmail(user, url).sendWelcome();
+    
 
    } catch (error) {
     next(error)
