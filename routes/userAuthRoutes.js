@@ -13,6 +13,7 @@ authRouter.post(
   userValidationMW,
   passport.authenticate("user-signup", { session: false }),
   async (req, res, next) => {
+   try {
     const body = {
       role: req.user.role,
       _id: req.user._id,
@@ -36,7 +37,9 @@ authRouter.post(
     const url = CONFIG.EXPLORE_PAGE
     await new sendEmail(req.user, url).sendWelcome();
 
-    
+   } catch (error) {
+    next(error)
+   } 
   }
 );
 
