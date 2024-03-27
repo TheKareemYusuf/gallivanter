@@ -1,7 +1,11 @@
 const express = require("express");
 const CONFIG = require("./config/config");
+const MongoStore = require("connect-mongo");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const session = require('express-session');
+
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -32,6 +36,24 @@ app.use(cors());
 console.log(app.get("env"));
 // console.log(process.env.NODE_ENV);
 
+// creating session storage
+const sessionStore = new MongoStore({
+  mongoUrl: CONFIG.DATABASE_URL,
+  collectionName: "sessions",
+});
+
+
+//session middleware
+// cookie: { maxAge: oneDay },
+
+app.use(
+  session({
+    secret: CONFIG.SESSION_SECRET,
+    saveUninitialized: false,
+    store: sessionStore,
+    resave: false,
+  })
+);
 
 // Middleware to parse user information
 app.use(bodyParser.urlencoded({ extended: false }));

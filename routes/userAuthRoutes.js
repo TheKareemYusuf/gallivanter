@@ -2,13 +2,15 @@ const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const CONFIG = require("./../config/config");
+const sendEmail = require('./../utils/email');
+
 
 const authRouter = express.Router();
 const userValidationMW = require("./../validators/user.validation");
 
 authRouter.post(
   "/signup",
-  // userValidationMW,
+  userValidationMW,
   passport.authenticate("user-signup", { session: false }),
   async (req, res, next) => {
     const body = {
@@ -30,6 +32,11 @@ authRouter.post(
       user: req.user,
       token,
     });
+
+    const url = CONFIG.EXPLORE_PAGE
+    await new sendEmail(req.user, url).sendWelcome();
+
+    
   }
 );
 
@@ -42,6 +49,11 @@ authRouter.post("/login", async (req, res, next) => {
       if (!user) {
         const error = new AppError("Username or password is incorrect", 504);
         return next(error);
+      }
+
+      // Check if the user signed up with Google
+      if (user.googleId) {
+        return next(new AppError("Please sign in with Google", 401));
       }
 
       req.login(user, { session: false }, async (error) => {
@@ -59,7 +71,7 @@ authRouter.post("/login", async (req, res, next) => {
 
         return res.status(200).json({
           status: "success",
-          message: "Signup successful",
+          message: "Login successful",
           role: user.role,
           firstName: user.firstName,
           email: user.email,
@@ -71,5 +83,40 @@ authRouter.post("/login", async (req, res, next) => {
     }
   })(req, res, next);
 });
+
+// Google OAuth2 Authentication
+authRouter.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+authRouter.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    // Successful Google authentication, generate JWT token
+    const user = req.user;
+    const body = {
+      role: user.role,
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+    };
+    const token = jwt.sign({ user: body }, CONFIG.SECRET_KEY, {
+      expiresIn: "12h",
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      firstName: user.firstName,
+      email: user.email,
+      role: user.role,
+      token,
+    });
+  }
+);
 
 module.exports = authRouter;

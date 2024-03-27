@@ -1,6 +1,8 @@
 const express = require("express");
 const passport = require("passport");
 const userController = require("./../controllers/userController");
+const userAuthController = require("./../controllers/userAuthController");
+
 const UserValidationMW = require("./../validators/user.validation");
 const restrictToMW = require("./../authentication/restrictionHandler");
 
@@ -13,6 +15,9 @@ const router = express.Router();
 //     userController.updateUserProfile
 //   );
 
+router.post('/forgotPassword', userAuthController.forgotPassword);
+router.patch('/resetPassword/:token', userAuthController.resetPassword);
+
 router
   .route("/")
   .get(
@@ -21,7 +26,7 @@ router
     userController.getUserProfile
   )
   .patch(
-    // UserValidationMW,
+    UserValidationMW,
     passport.authenticate("jwt", { session: false }),
     userController.updateUserProfile
   );

@@ -1,17 +1,19 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
+const crypto = require('crypto');
+
 
 const UserSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, "Please enter first name"],
+      // required: [true, "Please enter first name"],
       trim: true,
     },
     lastName: {
       type: String,
-      required: [true, "Please enter last name"],
+      // required: [true, "Please enter last name"],
       trim: true,
     },
     // userName: {
@@ -28,9 +30,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       minlength: 8,
       select: false,
-      required: function () {
-        return this.isNew || this.isModified("password");
-      },
+      // required: function () {
+      //   return this.isNew || this.isModified("password");
+      // },
     },
     confirmPassword: {
       type: String,
@@ -40,9 +42,6 @@ const UserSchema = new mongoose.Schema(
           return el === this.password;
         },
         message: "Passwords are not the same!",
-      },
-      required: function () {
-        return this.isNew || this.isModified("password");
       },
     },
     gender: {
@@ -57,19 +56,36 @@ const UserSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    // phoneNumber: {
+    //   type: String,
+    //   // required: [true, "Phone number is required"],
+    //   match: /^\d{11}$/,
+    //   unique: true,
+    // },
+
     phoneNumber: {
       type: String,
-      // required: [true, "Phone number is required"],
-      match: /^\d{11}$/,
+      validate: {
+        validator: function (value) {
+          return validator.isMobilePhone(value, "any", { strictMode: false });
+        },
+        message: "Please enter a valid phone number!",
+      },
       unique: true,
     },
-    creatorImageUrl: {
-      type: String,
-      default: "http://res.cloudinary.com/dzodph4o8/image/upload/v1693051381/creator-images/qa3cdrcltw6rtgejgst2.webp"
+    googleId: String, // Store Google ID
+    signedUpWithGoogle: {
+      type: Boolean,
+      default: false,
     },
-    creatorImagePublicId: {
+    userImageUrl: {
       type: String,
-      default: "creator-images/qa3cdrcltw6rtgejgst2"
+      default:
+        "http://res.cloudinary.com/dzodph4o8/image/upload/v1693051381/creator-images/qa3cdrcltw6rtgejgst2.webp",
+    },
+    userImagePublicId: {
+      type: String,
+      default: "creator-images/qa3cdrcltw6rtgejgst2",
     },
     address: String,
     agreed_to_terms: {
@@ -81,10 +97,20 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false
+    }
   },
   { timestamps: true }
 );
 
+
+// Hash the password
 UserSchema.pre("save", async function (next) {
   const user = this;
 
@@ -103,6 +129,53 @@ UserSchema.methods.isValidPassword = async function (password) {
   const compare = await bcrypt.compare(password, user.password);
 
   return compare;
+};
+
+
+// sets user status 
+// userSchema.pre(/^find/, function(next) {
+//   // this points to the current query
+//   this.find({ active: { $ne: false } });
+//   next();
+// });
+
+
+
+// compares user passwords
+UserSchema.methods.correctPassword = async function(
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+//   if (this.passwordChangedAt) {
+//     const changedTimestamp = parseInt(
+//       this.passwordChangedAt.getTime() / 1000,
+//       10
+//     );
+
+//     return JWTTimestamp < changedTimestamp;
+//   }
+
+//   // False means NOT changed
+//   return false;
+// };
+
+UserSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // console.log({ resetToken }, this.passwordResetToken);
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model("User", UserSchema);

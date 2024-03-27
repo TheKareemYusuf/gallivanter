@@ -15,7 +15,7 @@ router
     creatorController.getProfile
   )
   .patch(
-    // CreatorValidationMW,
+    CreatorValidationMW,
     passport.authenticate("jwt", { session: false }),
     creatorController.updateCreatorProfile
 

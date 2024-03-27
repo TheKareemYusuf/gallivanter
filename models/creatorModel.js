@@ -6,12 +6,14 @@ const { boolean } = require("joi");
 const CreatorSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    required: [true, "Please enter first name"],
+    // required: [true, "Please enter first name"],
+    lowercase: true,
     trim: true,
   },
   lastName: {
     type: String,
-    required: [true, "Please enter last name"],
+    // required: [true, "Please enter last name"],
+    lowercase: true,
     trim: true,
   },
   email: {
@@ -49,6 +51,11 @@ const CreatorSchema = new mongoose.Schema({
     },
     select: false,
   },
+  googleId: String, // Store Google ID
+  signedUpWithGoogle: {
+    type: Boolean,
+    default: false,
+  },
   creatorImageUrl: {
     type: String,
     default: "http://res.cloudinary.com/dzodph4o8/image/upload/v1693051381/creator-images/qa3cdrcltw6rtgejgst2.webp"
@@ -69,7 +76,7 @@ const CreatorSchema = new mongoose.Schema({
   companyName: {
     type: String,
     unique: true,
-    required: [true, "Please enter your company name"],
+    // required: [true, "Please enter your company name"],
     trim: true,
   },
   address: String,
