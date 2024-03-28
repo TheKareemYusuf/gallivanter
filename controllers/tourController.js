@@ -620,12 +620,12 @@ const joinATour = async (req, res, next) => {
 
     return res.redirect('https://paystack.com/pay/u10wmz06tm');
 
-    // return res
-    //   .status(200)
-    //   .json({
-    //     status: "success",
-    //     message: `Tour joined successfully, click here to make payment ${paymentUrl} check your email and proceed to pay`,
-    //   });
+    return res
+      .status(200)
+      .json({
+        status: "success",
+        message: `Tour joined successfully, click here to make payment ${paymentUrl} check your email and proceed to pay`,
+      });
   } catch (error) {
     next(error);
   }
