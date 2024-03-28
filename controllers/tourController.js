@@ -618,7 +618,7 @@ const joinATour = async (req, res, next) => {
 
     await new sendEmail(user, paymentUrl, tour).sendTourRegConfirmation();
 
-    return res.redirect('https://paystack.com/pay/u10wmz06tm');
+    // return res.redirect('https://paystack.com/pay/u10wmz06tm');
 
     return res
       .status(200)
