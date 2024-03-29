@@ -78,14 +78,28 @@ const TourSchema = new mongoose.Schema(
         { 
           type: mongoose.Schema.Types.ObjectId,
         },
-      ],
+      ], 
+      default: [],
       validate: {
         validator: function(arr) {
           return arr.length <= this.maxCapacity; // accessing maxCapacity from the schema
         },
         message: "Number of registered members cannot exceed the maximum capacity"
       },
+      
+    },
+    wishList: {
+      type: [
+        { 
+          type: mongoose.Schema.Types.ObjectId,
+        },
+      ], 
       default: [],
+      
+    },
+    numOfWishList: {
+      type: Number,
+      default: 0,
     },
     numOfRegMembers: {
       type: Number,

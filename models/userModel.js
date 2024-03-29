@@ -56,6 +56,14 @@ const UserSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    wishList: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+        },
+      ],
+      default: [],
+    },
     // phoneNumber: {
     //   type: String,
     //   // required: [true, "Phone number is required"],

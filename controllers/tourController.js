@@ -631,6 +631,69 @@ const joinATour = async (req, res, next) => {
   }
 };
 
+const addToWishList = async (req, res, next) => {
+  try {
+    // Get the id of the tour
+    const tourId = req.params.tourId;
+
+    // Get user id
+    const userId = req.user._id;
+
+    // Fetch the tour by its ID
+    const tour = await Tour.findById(tourId);
+
+    // Check if user is already registered for the tour
+    if (tour.wishList.includes(userId)) {
+      return next(
+        new AppError("Tour already added to wishlist", 200)
+      );
+    }
+
+    if (!tour) {
+      return next(new AppError("Tour not found", 404));
+    }
+
+
+    // Check if the tour creator is not trying to join
+    if (userId.toString() === tour.creatorId.toString()) {
+      return next(new AppError("You cannot add tour to your wishlist", 400));
+    }
+
+    // Add user Id to the wishlist field of the tour model
+    tour.wishList.push(userId);
+
+    // Increment numOfWishLIst by 1
+    tour.numOfWishList = tour.wishList.length;
+
+    // Save the updated tour document
+    await tour.save();
+
+    // Update the user model to include the tour
+    const user = await User.findById(userId);
+   
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    // Add the tour ID to the user's wishlist array
+    user.wishList.push(tourId);
+
+    // Save the updated user document
+    await user.save();
+
+
+    return res
+      .status(200)
+      .json({
+        status: "success",
+        message: "Tour successfully added to wishlist",
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getRegTourDetails = async (req, res, next) => {
   try {
     // Get the user id
@@ -705,7 +768,82 @@ const getAllRegTourDetails = async (req, res, next) => {
   }
 };
 
+
+const getWishlistTour = async (req, res, next) => {
+  try {
+    // Get the user id
+    const userId = req.user._id;
+
+    // Get tour Id from query params
+    const tourId = req.params.tourId;
+
+    // Find the user by Id
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    // Check if the user has the requested tour
+    if (!user.wishList.includes(tourId)) {
+      return next(new AppError("User yet to add tour to wishlist", 404));
+    }
+
+    // Fetch tour details using the tourId
+    const tour = await Tour.findById(tourId);
+
+    if (!tour) {
+      return next(new AppError("Tour not found", 404));
+    }
+    return res.status(200).json({
+      status: "success",
+      message: "Tour details retrieved successfully",
+      tour,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllWishlist = async (req, res, next) => {
+  try {
+    // Get the user id
+    const userId = req.user._id;
+
+    // Find the user by Id
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    // Get the tours field from the user document
+    const tourIds = user.wishList;
+
+    // Fetch tour details using the tourIds
+    const features = new APIFeatures(
+      Tour.find({ _id: { $in: tourIds } }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const tours = await features.query;
+
+    // const tours = await Tour.find({ _id: { $in: tourIds } });
+
+    return res.status(200).json({
+      status: "success",
+      message: "User tours retrieved successfully",
+      tours,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
+  addToWishList,
   createTour,
   addImages,
   uploadImages,
@@ -723,6 +861,8 @@ module.exports = {
   joinATour,
   getRegTourDetails,
   getAllRegTourDetails,
+  getAllWishlist,
+  getWishlistTour
 };
 
 //-----------------------------------------------------

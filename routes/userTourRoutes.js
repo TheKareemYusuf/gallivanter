@@ -5,18 +5,32 @@ const tourController = require("./../controllers/tourController");
 const router = express.Router();
 
 router
-  .route("/")
+  .route("/joined-tours")
   .get(
     passport.authenticate("jwt", { session: false }),
     tourController.getAllRegTourDetails
   );
 
 router
-  .route("/:tourId")
+  .route("/joined-tours/:tourId")
   .get(
     passport.authenticate("jwt", { session: false }),
     tourController.getRegTourDetails
   );
+
+router
+.route("/wishlist")
+.get(
+  passport.authenticate("jwt", { session: false }),
+  tourController.getAllWishlist
+);
+
+router
+.route("/wishlist/:tourId")
+.get(
+  passport.authenticate("jwt", { session: false }),
+  tourController.getWishlistTour
+);
 
 router
   .route("/:tourId/join")
@@ -25,4 +39,10 @@ router
     tourController.joinATour
   );
 
+router
+.route("/:tourId/wishlist")
+.post(
+  passport.authenticate("jwt", { session: false }),
+  tourController.addToWishList
+);
 module.exports = router;
