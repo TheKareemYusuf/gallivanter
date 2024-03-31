@@ -50,7 +50,7 @@ const forgotPassword = async (req, res, next) => {
     }
 }
 
-const resetPassword = async (req, res, next) => {
+const validateResetToken = async (req, res, next) => {
     try {
             // 1) Get user based on the token
             const hashedToken = crypto
@@ -66,28 +66,64 @@ const resetPassword = async (req, res, next) => {
             // 2) If token has not expired, and there is user, set the new password
             if (!user) {
               return next(new AppError('Token is invalid or has expired', 400));
+            } else {
+              res.status(200).json({
+                status: 'success',
+                message: 'Valid Token'
+              });
             }
-            user.password = req.body.password;
-            user.passwordConfirm = req.body.passwordConfirm;
-            user.passwordResetToken = undefined;
-            user.passwordResetExpires = undefined;
-            await user.save();
+        
           
             // 3) Update changedPasswordAt property for the user
             // 4) Log the user in, send JWT
             // createSendToken(user, 200, res);
-            res.status(200).json({
-                status: 'success',
-                message: 'Password changed successfully'
-              });
+           
 
     } catch (error) {
         next(error)
     }
 }
 
+const updatePassword = async (req, res, next) => {
+  try {
+          // 1) Get user based on the token
+          const hashedToken = crypto
+            .createHash('sha256')
+            .update(req.body.token)
+            .digest('hex');
+        
+          const user = await User.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetExpires: { $gt: Date.now() }
+          });
+        
+          // 2) If token has not expired, and there is user, set the new password
+          if (!user) {
+            return next(new AppError('Token is invalid or has expired', 400));
+          }
+          user.password = req.body.password;
+          user.passwordConfirm = req.body.passwordConfirm;
+          user.passwordResetToken = undefined;
+          user.passwordResetExpires = undefined;
+          await user.save();
+        
+          // 3) Update changedPasswordAt property for the user
+          // 4) Log the user in, send JWT
+          // createSendToken(user, 200, res);
+          res.status(200).json({
+              status: 'success',
+              message: 'Password changed successfully'
+            });
+
+  } catch (error) {
+      next(error)
+  }
+}
+
+
 
 module.exports = {
     forgotPassword,
-    resetPassword
+    validateResetToken,
+    updatePassword
 }

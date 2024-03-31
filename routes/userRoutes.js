@@ -16,7 +16,10 @@ const router = express.Router();
 //   );
 
 router.post('/forgotPassword', userAuthController.forgotPassword);
-router.patch('/resetPassword/:token', userAuthController.resetPassword);
+router.get('/resetPassword/:token', userAuthController.validateResetToken);
+
+router.patch('/updatePassword/', userAuthController.updatePassword);
+
 
 router
   .route("/")
