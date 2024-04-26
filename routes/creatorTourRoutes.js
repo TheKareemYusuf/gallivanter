@@ -50,6 +50,11 @@ router
   .patch(
     passport.authenticate("jwt", { session: false }),
     tourController.updateTourState
+  )
+  .delete(
+    passport.authenticate("jwt", { session: false }),
+    restrictToMW.restrictTo("admin"),
+    tourController.deleteTour
   );
 
 router

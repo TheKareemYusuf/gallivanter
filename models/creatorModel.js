@@ -87,6 +87,7 @@ const CreatorSchema = new mongoose.Schema({
   }, 
   role: {
     type: String,
+    enum: ["creator", "admin"],
     default: "creator",
   },
 },

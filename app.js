@@ -5,6 +5,9 @@ const MongoStore = require("connect-mongo");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const session = require('express-session');
+const rateLimitMiddleware = require('./utils/rateLimiter');
+const helmet = require("helmet");
+
 
 
 const AppError = require("./utils/appError");
@@ -22,6 +25,12 @@ const userTourRouter = require('./routes/userTourRoutes');
 
 
 const app = express();
+
+// Add helmet for app security
+app.use(helmet());
+
+// Apply rate limiter middleware to all routes
+app.use(rateLimitMiddleware)
 
 // const corsOptions = {
 //   origin: "*",

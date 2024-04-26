@@ -17,7 +17,7 @@ authRouter.post(
       role: req.user.role,
       _id: req.user._id,
       email: req.user.email,
-      firstName: req.user.firstName,
+      firstName: req.user.firstName, 
     };
     const token = jwt.sign({ user: body }, CONFIG.SECRET_KEY, {
       expiresIn: "12h",

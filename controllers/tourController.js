@@ -285,9 +285,29 @@ const getCreatourTours = async (req, res, next) => {
     const user = await Creator.findById(id);
     if (!user) {
       return next(new AppError("Creator not found", 404));
-    } else {
+    } 
+    
+    if (user.role === "creator") {
       const features = new APIFeatures(
         Tour.find().where("creatorId").equals(id),
+        req.query
+      )
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+      const tours = await features.query;
+
+      res.status(200).json({
+        status: "success",
+        result: tours.length,
+        data: {
+          tours,
+        },
+      });
+    } else {
+      const features = new APIFeatures(
+        Tour.find(),
         req.query
       )
         .filter()
@@ -842,6 +862,28 @@ const getAllWishlist = async (req, res, next) => {
     next(error);
   }
 };
+
+const deleteTour = async (req, res, next) => {
+  try {
+    const id = req.params.tourId;
+    const oldTour = await Tour.findById(id);
+
+    if (!oldTour) {
+      return next(new AppError("Tour not found", 404));
+    }
+
+    await Tour.findByIdAndDelete(id);
+
+    res.status(200).json({
+      status: "Tour successfully deleted",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 module.exports = {
   addToWishList,
   createTour,
@@ -862,7 +904,8 @@ module.exports = {
   getRegTourDetails,
   getAllRegTourDetails,
   getAllWishlist,
-  getWishlistTour
+  getWishlistTour,
+  deleteTour
 };
 
 //-----------------------------------------------------

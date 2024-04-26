@@ -37,6 +37,7 @@ passport.use(
         phoneNumber,
         companyName,
         agreed_to_terms,
+        role,
       } = req.body;
 
       if (agreed_to_terms === false) {
@@ -51,7 +52,8 @@ passport.use(
         confirmPassword,
         phoneNumber,
         companyName,
-        agreed_to_terms
+        agreed_to_terms,
+        role
       });
 
      
