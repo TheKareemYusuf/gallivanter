@@ -4,9 +4,9 @@ const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
 const Creator = require("../models/creatorModel");
 const uploadPicture = require("../utils/multerImageHandler");
+// const logger = require("../utils/logger")
 const sendEmail = require("../utils/email");
 const CONFIG = require("./../config/config");
-
 // const multer = require("multer");
 // const sharp = require("sharp");
 
@@ -72,6 +72,7 @@ const createTour = async (req, res, next) => {
 
     // Send response to frontend
     res.status(201).json(response);
+    // logger.info(`Tour created successfully: ${newTour.id}`);
 
     // const {
     //   title,
@@ -115,6 +116,8 @@ const createTour = async (req, res, next) => {
     //   data: newTour,
     // });
   } catch (error) {
+    logger.error(`Failed to create tour: ${error.message}`);
+
     next(error);
   }
 };

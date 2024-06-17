@@ -12,6 +12,7 @@ const helmet = require("helmet");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
+// const logger = require('./utils/logger');
 
 
 const userAuthRouter = require("./routes/userAuthRoutes");
@@ -110,5 +111,9 @@ app.all("*", (req, res, next) => {
 });
 
 app.use(globalErrorHandler.errorHandler);
+
+// Example of logging
+// logger.info('Server is starting...');
+// logger.error('An error occurred!');
 
 module.exports = app;

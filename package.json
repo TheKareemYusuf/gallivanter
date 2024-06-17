@@ -37,7 +37,8 @@
     "pug": "^3.0.2",
     "sharp": "^0.32.5",
     "streamifier": "^0.1.1",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "winston": "^3.13.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
